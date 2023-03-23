@@ -15,8 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.db import router
-from django.urls import path
-from api.views import TodosView,TodoModelViews,UsersView
+from django.urls import path,include
+from api.views import TodosView,TodoModelViews,UsersView,TodoDeleteView
 from rest_framework.routers import DefaultRouter
 router=DefaultRouter()
 router.register("todos",TodosView,basename="todos")
@@ -26,4 +26,6 @@ router.register("api/v1/users",UsersView,basename="users")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("api/v2/todos/<int:pk>",TodoDeleteView.as_view()),
+    path("web/",include("todoweb.urls"))
 ]+router.urls

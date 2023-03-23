@@ -25,7 +25,7 @@ class TodosView(ViewSet):
 
     def retrieve(self,request,*args,**kw):
         id=kw.get("pk")
-        qs=Todos.objects.get(id=id)
+        qs=Todos.objects.filter(id=id)
         serializer=TodoSerializer(qs,many=True)
         return Response(data=serializer.data)
 
@@ -45,6 +45,7 @@ class TodosView(ViewSet):
             return Response(serializer.errors)
 
 class TodoModelViews(ModelViewSet):
+    http_method_names=["get","post","put"]
     authentication_classes=[authentication.BasicAuthentication]
     permission_classes=[permissions.IsAuthenticated]
     serializer_class=TodoSerializer
@@ -114,6 +115,18 @@ class UsersView(ModelViewSet):
     #         return Response(data=serializer.data)
     #     else:
     #         return Response(data=serializer.errors)
+
+from rest_framework import mixins
+from rest_framework import generics
+class TodoDeleteView(mixins.DestroyModelMixin,generics.GenericAPIView):
+    serializer_class=TodoSerializer
+    queryset=Todos.objects.all()
+    authentication_classes=[authentication.BasicAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+
+    def delete(self,request,*args,**kw):
+        return self.destroy(request,*args,**kw)
+        
     
 
 
